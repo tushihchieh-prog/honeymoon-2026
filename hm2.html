@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 奧捷匈 15天蜜月浪漫之旅</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8f5f2; /* Creamy background */
+            color: #4a4a4a;
+        }
+        h1, h2, h3, .serif {
+            font-family: 'Noto Serif TC', serif;
+        }
+        .honey-highlight {
+            background-color: #fff0f3;
+            border-left: 4px solid #e11d48;
+        }
+        .day-card {
+            break-inside: avoid; /* Prevent page break inside card */
+            page-break-inside: avoid;
+        }
+        .city-header-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background-color: white;
+                font-size: 11pt; /* Slightly smaller for print */
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-break {
+                page-break-before: always;
+            }
+            .shadow-lg, .shadow-xl {
+                box-shadow: none !important;
+                border: 1px solid #ddd;
+            }
+            .bg-white {
+                background-color: white !important;
+            }
+            /* Ensure background colors print */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            a {
+                text-decoration: none;
+                color: #000;
+            }
+            /* Limit header image height for printing */
+            .city-header-img {
+                height: 120px;
+                margin-bottom: 1rem;
+            }
+            header {
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
+            /* HIDE daily images on print to save ink and space */
+            .day-img-container {
+                display: none !important;
+            }
+            .day-card {
+                display: block !important; /* Reset flex */
+            }
+            .day-content {
+                width: 100% !important;
+                padding: 1rem !important;
+            }
+        }
+
+        /* Modal Animation */
+        .modal {
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="pb-20">
+
+    <!-- Floating Print Button -->
+    <div class="fixed bottom-6 right-6 z-50 no-print">
+        <button onclick="triggerPrint()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 px-6 rounded-full shadow-xl flex items-center gap-2 transition-all transform hover:scale-105 cursor-pointer">
+            <i class="fas fa-file-pdf"></i> 列印 / 存成 PDF
+        </button>
+    </div>
+
+    <!-- Print Helper Modal -->
+    <div id="printHelperModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center no-print">
+        <div class="bg-white rounded-lg p-6 max-w-sm w-full shadow-2xl m-4">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4 text-rose-600 text-xl">
+                    <i class="fas fa-print"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">正在呼叫列印...</h3>
+                <p class="text-sm text-gray-600 mb-4">如果列印視窗沒有自動跳出，請嘗試使用鍵盤快速鍵：</p>
+                
+                <div class="bg-gray-100 p-3 rounded mb-4 text-center font-mono font-bold text-gray-700">
+                    Ctrl + P <span class="text-xs font-normal text-gray-500">(Windows)</span><br>
+                    Cmd + P <span class="text-xs font-normal text-gray-500">(Mac)</span>
+                </div>
+                
+                <button onclick="closePrintModal()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded transition">
+                    我知道了，關閉視窗
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="relative overflow-hidden bg-gray-900 text-white">
+        <!-- Background Image -->
+        <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1920&q=80" alt="Travel Background" class="absolute inset-0 w-full h-full object-cover opacity-40">
+        
+        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+        
+        <div class="container mx-auto px-6 py-16 relative z-10 text-center">
+            <div class="inline-block px-3 py-1 bg-rose-600 text-white text-xs font-bold tracking-widest uppercase rounded-full mb-4 shadow-lg">Honeymoon Trip</div>
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight text-white drop-shadow-lg">奧捷匈 15天蜜月浪漫之旅</h1>
+            <p class="text-xl md:text-2xl text-gray-200 serif italic mb-6">Budapest · Vienna · Hallstatt · CK · Prague</p>
+            <div class="flex justify-center gap-6 text-sm md:text-base font-medium text-gray-300">
+                <span class="bg-black/30 px-4 py-2 rounded-full backdrop-blur-sm"><i class="far fa-calendar-alt mr-2 text-rose-400"></i>2026/03/06 - 2026/03/20</span>
+                <span class="bg-black/30 px-4 py-2 rounded-full backdrop-blur-sm"><i class="fas fa-plane mr-2 text-rose-400"></i>跨越三國</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 max-w-5xl">
+
+        <!-- City Navigation (Screen Only) -->
+        <nav class="flex flex-wrap justify-center gap-2 mb-10 no-print sticky top-0 bg-[#f8f5f2]/90 backdrop-blur-md py-4 z-40 transition-all">
+            <a href="#budapest" class="px-4 py-2 bg-white rounded-full shadow hover:shadow-md text-sm font-semibold text-rose-600 border border-rose-100 hover:bg-rose-50 transition">布達佩斯</a>
+            <a href="#vienna" class="px-4 py-2 bg-white rounded-full shadow hover:shadow-md text-sm font-semibold text-indigo-600 border border-indigo-100 hover:bg-indigo-50 transition">維也納</a>
+            <a href="#lake" class="px-4 py-2 bg-white rounded-full shadow hover:shadow-md text-sm font-semibold text-teal-600 border border-teal-100 hover:bg-teal-50 transition">奧地利湖區</a>
+            <a href="#ck" class="px-4 py-2 bg-white rounded-full shadow hover:shadow-md text-sm font-semibold text-orange-600 border border-orange-100 hover:bg-orange-50 transition">CK小鎮</a>
+            <a href="#prague" class="px-4 py-2 bg-white rounded-full shadow hover:shadow-md text-sm font-semibold text-purple-600 border border-purple-100 hover:bg-purple-50 transition">布拉格</a>
+        </nav>
+
+        <!-- SECTION 1: BUDAPEST -->
+        <section id="budapest" class="mb-12 scroll-mt-24">
+            <img src="https://images.unsplash.com/photo-1565426873118-a1bd298fb23f?auto=format&fit=crop&w=1200&q=80" alt="Budapest Parliament Night" class="city-header-img">
+            
+            <div class="flex items-center gap-4 mb-6 border-b-2 border-rose-200 pb-2">
+                <h2 class="text-3xl font-bold text-rose-800">第一站：匈牙利 布達佩斯 (Budapest)</h2>
+                <span class="text-sm bg-rose-100 text-rose-800 px-3 py-1 rounded-full whitespace-nowrap">溫泉與夜景之都</span>
+            </div>
+
+            <!-- Day 1 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row border-l-8 border-rose-400">
+                <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1514214246283-ef1e12d6476b?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Budapest Night">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Day 1: 抵達布達佩斯</h3>
+                            <p class="text-gray-500 text-sm">2026/3/6 (五)</p>
+                        </div>
+                        <div class="text-right">
+                             <span class="block text-xs font-bold text-gray-400 uppercase">機票總額</span>
+                             <span class="font-bold text-gray-800">NT$32,680</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600"><i class="fas fa-bus"></i></div>
+                            <div>
+                                <p class="font-semibold">機場交通</p>
+                                <p class="text-sm text-gray-600">維也納機場搭乘 FlixBus 直達 Budapest Népliget Autóbusz-Pályaudvar (約3小時)。</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-600"><i class="fas fa-utensils"></i></div>
+                            <div>
+                                <p class="font-semibold">晚餐：匈牙利燉牛肉湯 (Goulash)</p>
+                                <p class="text-sm text-gray-600">推薦：<span class="font-medium">Menza</span> 或 <span class="font-medium">Gettó Gulyás</span>。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 bg-gray-50 p-4 rounded-lg flex items-start gap-3 border border-gray-100">
+                        <i class="fas fa-bed text-rose-500 mt-1"></i>
+                        <div>
+                            <p class="font-bold text-gray-800">Three Corners Lifestyle Hotel</p>
+                            <p class="text-sm font-semibold text-rose-600 mt-1">NT$14,895 (4晚)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 2 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row">
+                <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1549877452-9c387954fbc2?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Fisherman's Bastion">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Day 2: 布達區的浪漫與輝煌</h3>
+                            <p class="text-gray-500 text-sm">2026/3/7 (六)</p>
+                        </div>
+                        <div class="text-right text-xs text-gray-500">
+                             交通: €28 + €80
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600"><i class="fas fa-camera"></i></div>
+                            <div>
+                                <p class="font-semibold">城堡山巡禮</p>
+                                <p class="text-sm text-gray-600">復古纜車、<strong>漁人堡</strong> (Fisherman's Bastion)、馬提亞斯教堂。</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center text-pink-600"><i class="fas fa-birthday-cake"></i></div>
+                            <div>
+                                <p class="font-semibold">Ruszwurm Confectionery</p>
+                                <p class="text-sm text-gray-600">在城堡區享用百年歷史蛋糕。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="honey-highlight p-4 rounded-lg mt-2 relative overflow-hidden">
+                            <i class="fas fa-heart absolute -right-2 -bottom-2 text-6xl text-rose-100 opacity-50 transform rotate-12"></i>
+                            <p class="text-sm text-gray-700 relative z-10"><strong><i class="fas fa-wine-glass mr-1 text-rose-600"></i> 多瑙河晚宴遊船</strong>：邊吃晚餐邊看國會大廈倒影，蜜月必備。(預算: €120)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 3 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row">
+                 <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1598935898639-66e30ebf9f6e?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Thermal Bath">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Day 3: 佩斯區的文化與放鬆</h3>
+                            <p class="text-gray-500 text-sm">2026/3/8 (日)</p>
+                        </div>
+                        <div class="text-right text-xs text-gray-500">
+                            門票: €140
+                       </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <p class="text-sm text-gray-600"><strong>上午：</strong>國會大廈導覽、多瑙河畔之鞋。</p>
+                        <p class="text-sm text-gray-600"><strong>午餐：</strong>中央市場 (吃 Lángos 炸餅)。</p>
+
+                        <div class="honey-highlight p-4 rounded-lg mt-2 relative overflow-hidden">
+                            <i class="fas fa-hot-tub absolute -right-4 -bottom-2 text-6xl text-rose-100 opacity-50"></i>
+                            <div class="flex items-center gap-2 mb-2 relative z-10">
+                                <i class="fas fa-water text-rose-600"></i>
+                                <span class="font-bold text-rose-800">蜜月放鬆：布達佩斯溫泉</span>
+                            </div>
+                            <ul class="list-disc list-inside text-sm text-gray-600 relative z-10">
+                                <li><strong>塞切尼 (Széchenyi)</strong>：經典黃色建築，熱鬧。</li>
+                                <li><strong>盧達 (Rudas)</strong>：週末屋頂混浴，看夜景。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 4 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row">
+                 <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1569335401203-d08a50c60984?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Ruin Bar">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">Day 4: 猶太區與廢墟酒吧</h3>
+                        <p class="text-gray-500 text-sm">2026/3/9 (一)</p>
+                    </div>
+                    <div class="space-y-4">
+                        <p class="text-sm text-gray-700 flex items-start"><i class="fas fa-star-of-david mt-1 mr-3 text-blue-400 w-5"></i><span><strong>煙草街會堂</strong>：歐洲最大猶太會堂。</span></p>
+                        <p class="text-sm text-gray-700 flex items-start"><i class="fas fa-utensils mt-1 mr-3 text-orange-400 w-5"></i><span><strong>Mazel Tov</strong>：絕美花園廢墟餐廳，必拍。</span></p>
+                        <p class="text-sm text-gray-700 flex items-start"><i class="fas fa-glass-cheers mt-1 mr-3 text-purple-500 w-5"></i><span><strong>廢墟酒吧</strong>：晚上去 <strong>Szimpla Kert</strong> 體驗奇幻氛圍。</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="print-break"></div>
+
+        <!-- SECTION 2: VIENNA -->
+        <section id="vienna" class="mb-12 scroll-mt-24">
+            <img src="https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&w=1200&q=80" alt="Vienna Architecture" class="city-header-img">
+            
+            <div class="flex items-center gap-4 mb-6 border-b-2 border-indigo-200 pb-2">
+                <h2 class="text-3xl font-bold text-indigo-800">第二站：奧地利 維也納 (Vienna)</h2>
+                <span class="text-sm bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full whitespace-nowrap">音樂與皇室優雅</span>
+            </div>
+
+            <!-- Day 5 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row border-l-8 border-indigo-400">
+                <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1524177264879-1f41710965f8?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Vienna Cafe">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Day 5: 移動日 & 咖啡館</h3>
+                            <p class="text-gray-500 text-sm">2026/3/10 (二)</p>
+                        </div>
+                        <div class="text-right text-xs text-gray-500">
+                            火車/交通: €148
+                       </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-sm text-gray-700"><i class="fas fa-train mr-2 text-indigo-500"></i>搭乘 RegioJet 火車前往維也納 (約3小時)。</p>
+                        <p class="text-sm text-gray-700"><i class="fas fa-map-marker-alt mr-2 text-red-500"></i>聖史蒂芬大教堂、格拉本大街。</p>
+                        
+                        <div class="honey-highlight p-3 rounded-lg flex items-center gap-4">
+                            <i class="fas fa-mug-hot text-2xl text-rose-400 ml-2"></i>
+                            <div>
+                                <p class="font-bold text-rose-800 text-sm mb-1">蜜月下午茶</p>
+                                <p class="text-sm text-gray-700">推薦 <strong>Café Central</strong> 或 <strong>Café Demel</strong>。必點：Melange 咖啡 + 蛋糕。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 bg-gray-50 p-4 rounded-lg flex items-start gap-3 border border-gray-100">
+                        <i class="fas fa-bed text-indigo-500 mt-1"></i>
+                        <div>
+                            <p class="font-bold text-gray-800">Premier Inn Wien City Hauptbahnhof</p>
+                            <p class="text-sm font-semibold text-indigo-600 mt-1">NT$11,373 (3晚)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 6 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row">
+                 <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1596395811776-590d0b0b0213?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Schonbrunn">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="mb-4 flex justify-between">
+                        <h3 class="text-xl font-bold text-gray-800">Day 6: 皇宮漫遊與音樂</h3>
+                        <div class="text-xs text-gray-500">預算: €80</div>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <h4 class="font-bold text-indigo-700 mb-1 text-sm">美泉宮 (熊布朗宮)</h4>
+                            <ul class="list-disc list-inside text-sm text-gray-600">
+                                <li><strong>重點：</strong>直奔免費的後花園！</li>
+                                <li><strong>蜜月拍照：</strong>爬上 <strong>凱旋門 (Gloriette)</strong>，俯瞰維也納全景。</li>
+                            </ul>
+                        </div>
+                        <div class="pt-2 border-t border-gray-100">
+                             <p class="text-sm text-gray-600">下午參觀 <strong>奧地利國家圖書館</strong> (世界最美圖書館)。晚上可體驗國家歌劇院或教堂音樂會。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 7 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row">
+                 <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1597924971046-e9b0682283a0?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Prater Wheel">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="mb-4 flex justify-between">
+                        <h3 class="text-xl font-bold text-gray-800">Day 7: 藝術與電影場景</h3>
+                        <div class="text-xs text-gray-500">預算: €80</div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                             <div class="bg-yellow-100 text-yellow-600 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 text-xs mt-1"><i class="fas fa-paint-brush"></i></div>
+                             <p class="text-sm text-gray-700"><strong>美景宮</strong>：必看克林姆名畫《吻》(The Kiss)。</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="bg-orange-100 text-orange-600 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 text-xs mt-1"><i class="fas fa-utensils"></i></div>
+                            <p class="text-sm text-gray-700"><strong>Figlmüller</strong>：品嚐比臉大炸豬排 (需預約)。</p>
+                        </div>
+
+                        <div class="honey-highlight p-3 rounded-lg relative overflow-hidden">
+                            <i class="fas fa-film absolute right-2 bottom-2 text-6xl text-rose-100 opacity-30 transform -rotate-12"></i>
+                            <p class="font-bold text-rose-800 text-sm mb-1 relative z-10"><i class="fas fa-heart mr-2"></i>浪漫推薦：普拉特遊樂園</p>
+                            <p class="text-sm text-gray-700 relative z-10">搭乘百年摩天輪。電影《愛在黎明破曉時》場景。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: LAKE DISTRICT -->
+        <section id="lake" class="mb-12 scroll-mt-24">
+            <img src="https://images.unsplash.com/photo-1501952476817-d7ae22e8ee4e?auto=format&fit=crop&w=1200&q=80" alt="Hallstatt Lake" class="city-header-img">
+
+            <div class="flex items-center gap-4 mb-6 border-b-2 border-teal-200 pb-2">
+                <h2 class="text-3xl font-bold text-teal-800">第三站：奧地利 湖區</h2>
+                <span class="text-sm bg-teal-100 text-teal-800 px-3 py-1 rounded-full whitespace-nowrap">真善美的山水畫</span>
+            </div>
+
+            <!-- Day 8 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row border-l-8 border-teal-400">
+                <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1601997233863-7140e6988849?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Bad Ischl">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Day 8: 移動至巴德伊舍</h3>
+                            <p class="text-gray-500 text-sm">2026/3/13 (五)</p>
+                        </div>
+                        <div class="text-right text-xs text-gray-500">
+                            交通: €140
+                       </div>
+                    </div>
+                    <div class="space-y-3">
+                        <p class="text-sm text-gray-600">搭火車至皇帝與茜茜公主訂婚之地。</p>
+                        <p class="text-sm text-gray-600"><i class="fas fa-coffee mr-2 text-teal-500"></i>下午茶：<strong>Café Zauner</strong>。</p>
+                        <div class="mt-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
+                            <p class="font-bold text-gray-800">Im Kurpark</p>
+                            <p class="text-sm font-semibold text-teal-600">NT$8,521 (2晚)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 9 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row">
+                 <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1505342203051-40997c6c21e6?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="St Wolfgang">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="mb-4 flex justify-between">
+                        <h3 class="text-xl font-bold text-gray-800">Day 9: 沃爾夫岡湖一日遊</h3>
+                        <div class="text-xs text-gray-500">預算: €144</div>
+                    </div>
+                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-2">
+                        <li><strong>夏夫堡登山火車</strong>：紅色蒸汽火車，山頂全景震撼。(備案：遊船)。</li>
+                        <li><strong>漫遊</strong>：聖沃爾夫岡小鎮，參觀朝聖教堂。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Day 10 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row">
+                 <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1478059299873-f047d8c5b8d7?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Gosau Lake">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Day 10: 哈修塔特 & 戈紹湖</h3>
+                            <p class="text-gray-500 text-sm">2026/3/15 (日)</p>
+                        </div>
+                        <div class="text-right text-xs text-gray-500">
+                            巴士: €100
+                       </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-teal-50 p-3 rounded-lg border border-teal-100">
+                            <p class="font-bold text-teal-800 text-sm mb-1"><i class="fas fa-info-circle mr-1"></i> 行程攻略</p>
+                            <p class="text-sm text-gray-700">中午人多時去 <strong>戈紹湖 (Gosausee)</strong> 看倒影。傍晚遊客散去，再回哈修塔特享受寧靜。</p>
+                        </div>
+                        <div class="mt-2">
+                             <p class="font-bold text-gray-800 text-sm"><i class="fas fa-bed text-teal-500 mr-2"></i>Heritage Hotel Hallstatt</p>
+                             <p class="text-xs text-gray-500">碼頭旁絕佳位置。NT$10,124</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="print-break"></div>
+
+        <!-- SECTION 4: CK -->
+        <section id="ck" class="mb-12 scroll-mt-24">
+            <img src="https://images.unsplash.com/photo-1534127885747-97213b1f13ce?auto=format&fit=crop&w=1200&q=80" alt="Cesky Krumlov" class="city-header-img">
+
+            <div class="flex items-center gap-4 mb-6 border-b-2 border-orange-200 pb-2">
+                <h2 class="text-3xl font-bold text-orange-800">第四站：捷克 CK小鎮</h2>
+                <span class="text-sm bg-orange-100 text-orange-800 px-3 py-1 rounded-full whitespace-nowrap">中世紀童話</span>
+            </div>
+
+            <!-- Day 11 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row border-l-8 border-orange-400">
+                 <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1501952476817-d7ae22e8ee4e?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Hallstatt Morning">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Day 11: 晨霧 & CK小鎮</h3>
+                            <p class="text-gray-500 text-sm">2026/3/16 (一)</p>
+                        </div>
+                        <div class="text-right text-xs text-gray-500">
+                            預算: €346
+                       </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="honey-highlight p-3 rounded-lg flex items-start gap-3">
+                             <i class="fas fa-sun text-orange-500 text-xl mt-1"></i>
+                             <div>
+                                <p class="font-bold text-rose-800 text-sm">絕景時刻</p>
+                                <p class="text-sm text-gray-700">天亮前起床到 <strong>Classic Village Viewpoint</strong> 看晨霧，這是住宿者的特權。</p>
+                             </div>
+                        </div>
+                        <ul class="list-disc list-inside text-sm text-gray-700">
+                            <li><strong>上午</strong>：參觀鹽礦或天空步道。</li>
+                            <li><strong>移動</strong>：搭乘 CK Shuttle 直達旅館。</li>
+                            <li><strong>晚餐</strong>：地窖餐廳吃中世紀烤肉。</li>
+                        </ul>
+                        <div class="mt-2 bg-gray-50 p-3 rounded text-sm">
+                            <span class="font-bold"><i class="fas fa-bed text-orange-500 mr-2"></i>Boutique hotel Villa Beatika</span>
+                            <span class="block text-orange-600 text-xs">NT$4,162</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 12 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row">
+                 <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1588665792942-d33687353162?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="CK Castle Tower">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">Day 12: CK城堡 -> 布拉格</h3>
+                        <p class="text-gray-500 text-sm">2026/3/17 (二)</p>
+                    </div>
+                    <div class="space-y-3">
+                        <p class="text-sm text-gray-700"><strong>上午：</strong>CK城堡、彩繪塔俯瞰紅屋頂。</p>
+                        <p class="text-sm text-gray-700"><strong>移動：</strong>搭乘 FlixBus 前往布拉格。</p>
+                        <p class="text-sm text-gray-700"><strong>體驗：</strong>舊城廣場天文鐘、肉桂捲 (Trdelník)。</p>
+                        <div class="mt-4 bg-gray-50 p-4 rounded-lg border-l-4 border-purple-500">
+                            <p class="font-bold text-gray-800">The Viaduct - Suites & More</p>
+                            <p class="text-sm font-semibold text-purple-600">NT$16,893 (3晚)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: PRAGUE -->
+        <section id="prague" class="mb-12 scroll-mt-24">
+            <img src="https://images.unsplash.com/photo-1541849546-2165492d0695?auto=format&fit=crop&w=1200&q=80" alt="Prague Charles Bridge" class="city-header-img">
+
+            <div class="flex items-center gap-4 mb-6 border-b-2 border-purple-200 pb-2">
+                <h2 class="text-3xl font-bold text-purple-800">第五站：捷克 布拉格 (Prague)</h2>
+                <span class="text-sm bg-purple-100 text-purple-800 px-3 py-1 rounded-full whitespace-nowrap">千塔之城與浪漫傳說</span>
+            </div>
+
+            <!-- Day 13 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row">
+                 <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1554195155-22e434f40f0c?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Prague Castle">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="mb-4 flex justify-between">
+                        <h3 class="text-xl font-bold text-gray-800">Day 13: 城堡區與小城區</h3>
+                        <div class="text-xs text-gray-500">預算: €130</div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-sm">1</div>
+                            <div>
+                                <p class="font-semibold text-sm">布拉格城堡區</p>
+                                <p class="text-sm text-gray-600">聖維特大教堂、黃金巷。</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-sm">2</div>
+                            <div>
+                                <p class="font-semibold text-sm">查理大橋 & 康帕島</p>
+                                <p class="text-sm text-gray-600">走過經典的橋，去橋下寧靜的康帕島看列儂牆。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 14 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row">
+                 <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1565516904792-56c68021c7c9?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Prague View">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="mb-4 flex justify-between">
+                        <h3 class="text-xl font-bold text-gray-800">Day 14: 登高望遠</h3>
+                        <div class="text-xs text-gray-500">預算: €104</div>
+                    </div>
+                    <div class="space-y-4">
+                        <p class="text-sm text-gray-700">佩特任山 (Petřín Hill) 纜車，上暸望塔看全景。下午逛新城區。</p>
+                        <div class="honey-highlight p-4 rounded-lg relative overflow-hidden">
+                            <i class="fas fa-glass-cheers absolute right-2 bottom-2 text-6xl text-rose-100 opacity-30 transform rotate-6"></i>
+                            <p class="font-bold text-rose-800 text-sm mb-1 relative z-10"><i class="fas fa-wine-glass-alt mr-2"></i>蜜月完美句點</p>
+                            <p class="text-sm text-gray-700 relative z-10">晚餐推薦：<strong>Terasa U Zlaté studně</strong> (視野絕佳)。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 15 -->
+            <div class="day-card bg-white rounded-xl shadow-lg overflow-hidden mb-6 flex flex-col md:flex-row">
+                 <div class="day-img-container md:w-1/3 h-48 md:h-auto relative shrink-0">
+                    <img src="https://images.unsplash.com/photo-1579782550186-b4d081f96420?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Prague Market">
+                </div>
+                <div class="day-content p-6 md:w-2/3">
+                    <div class="mb-4">
+                        <h3 class="text-xl font-bold text-gray-800">Day 15: 告別布拉格</h3>
+                        <p class="text-gray-500 text-sm">2026/3/20 (五)</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg border border-gray-200">
+                        <h4 class="font-bold text-gray-700 mb-2 text-sm"><i class="fas fa-shopping-bag mr-2"></i>最後採買清單</h4>
+                        <ul class="list-disc list-inside text-sm text-gray-600">
+                            <li>菠丹妮 (Botanicus) 香氛皂</li>
+                            <li>蔓菲蘿 (Manufaktura)</li>
+                            <li>Koh-i-noor 色鉛筆</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUMMARY -->
+        <section class="mt-12 bg-slate-800 text-white rounded-xl p-8 shadow-xl print-break">
+            <h2 class="text-2xl font-bold mb-6 text-center border-b border-slate-600 pb-4">旅費預估總表</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-rose-300 mb-3">固定支出 (NT$)</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex justify-between"><span>機票</span> <span>NT$32,680</span></li>
+                        <li class="flex justify-between"><span>布達佩斯住宿</span> <span>NT$14,895</span></li>
+                        <li class="flex justify-between"><span>維也納住宿</span> <span>NT$11,373</span></li>
+                        <li class="flex justify-between"><span>巴德伊舍住宿</span> <span>NT$8,521</span></li>
+                        <li class="flex justify-between"><span>哈修塔特住宿</span> <span>NT$10,124</span></li>
+                        <li class="flex justify-between"><span>CK小鎮住宿</span> <span>NT$4,162</span></li>
+                        <li class="flex justify-between"><span>布拉格住宿</span> <span>NT$16,893</span></li>
+                        <li class="flex justify-between pt-2 border-t border-slate-600 font-bold text-lg"><span>總計</span> <span>NT$98,648</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-indigo-300 mb-3">當地預算 (Euro)</h3>
+                    <p class="text-xs text-gray-400 mb-2">*包含交通、門票、餐飲雜支等估算</p>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div class="bg-slate-700 p-2 rounded">Day 1: €116</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 2: €228</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 3: €206</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 4: €80</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 5: €148</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 6: €80</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 7: €80</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 8: €140</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 9: €144</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 10: €100</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 11: €346</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 12: €116</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 13: €130</div>
+                        <div class="bg-slate-700 p-2 rounded">Day 14: €104</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-8 text-gray-500 text-sm no-print">
+        <p>© 2026 Honeymoon Trip Plan</p>
+    </footer>
+
+    <script>
+        function triggerPrint() {
+            // Show instruction modal first
+            const modal = document.getElementById('printHelperModal');
+            modal.classList.add('active');
+            
+            // Attempt to print after a short delay
+            setTimeout(() => {
+                window.print();
+            }, 500);
+        }
+
+        function closePrintModal() {
+            const modal = document.getElementById('printHelperModal');
+            modal.classList.remove('active');
+        }
+    </script>
+</body>
+</html>
