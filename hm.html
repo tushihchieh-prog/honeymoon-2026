@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 中歐蜜月之旅 • 15 Days</title>
+    <!-- 引入 React 和 ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- 引入 Babel 用於解析 JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- 引入 Tailwind CSS 用於樣式 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 設定字體 -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* 列印時隱藏按鈕本身 */
+        @media print {
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // 簡單的圖示組件 (SVG)
+        const Icon = ({ name, size = 18, className = "" }) => {
+            const icons = {
+                mapPin: <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>,
+                mapPinDot: <circle cx="12" cy="10" r="3"></circle>,
+                calendar: <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>,
+                calendarLine: <line x1="16" y1="2" x2="16" y2="6"></line>,
+                calendarLine2: <line x1="8" y1="2" x2="8" y2="6"></line>,
+                calendarLine3: <line x1="3" y1="10" x2="21" y2="10"></line>,
+                clock: <circle cx="12" cy="12" r="10"></circle>,
+                clockHand: <polyline points="12 6 12 12 16 14"></polyline>,
+                arrowRight: <line x1="5" y1="12" x2="19" y2="12"></line>,
+                arrowRightTip: <polyline points="12 5 19 12 12 19"></polyline>,
+                heart: <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>,
+                euro: <path d="M4 10h12"></path>,
+                euro2: <path d="M4 14h9"></path>,
+                euroCurve: <path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"></path>,
+                bed: <path d="M2 4v16"></path>,
+                bed2: <path d="M2 8h18a2 2 0 0 1 2 2v10"></path>,
+                bed3: <path d="M2 17h20"></path>,
+                bed4: <path d="M6 8v9"></path>,
+                star: <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>,
+                train: <rect x="2" y="5" width="20" height="14" rx="2"></rect>,
+                trainLine: <line x1="2" y1="10" x2="22" y2="10"></line>,
+                trainWheel1: <line x1="7" y1="15" x2="7.01" y2="15"></line>,
+                trainWheel2: <line x1="11" y1="15" x2="11.01" y2="15"></line>,
+                printer: <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            };
+
+            // 組合部分複雜圖示
+            const getPath = (n) => {
+                if (n === 'mapPin') return <>{icons.mapPin}{icons.mapPinDot}</>;
+                if (n === 'calendar') return <>{icons.calendar}{icons.calendarLine}{icons.calendarLine2}{icons.calendarLine3}</>;
+                if (n === 'clock') return <>{icons.clock}{icons.clockHand}</>;
+                if (n === 'arrowRight') return <>{icons.arrowRight}{icons.arrowRightTip}</>;
+                if (n === 'euro') return <>{icons.euro}{icons.euro2}{icons.euroCurve}</>;
+                if (n === 'bed') return <>{icons.bed}{icons.bed2}{icons.bed3}{icons.bed4}</>;
+                if (n === 'train') return <>{icons.train}{icons.trainLine}{icons.trainWheel1}{icons.trainWheel2}</>;
+                if (n === 'printer') return (
+                    <>
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </>
+                );
+                return icons[n];
+            };
+
+            return (
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width={size} 
+                    height={size} 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    className={className}
+                >
+                    {getPath(name)}
+                </svg>
+            );
+        };
+
+        const ItineraryApp = () => {
+            const [activeTab, setActiveTab] = useState('Budapest');
+
+            // 完整行程資料
+            const itineraryData = {
+                Budapest: {
+                    city: "匈牙利 布達佩斯",
+                    label: "布達佩斯",
+                    color: "from-rose-500 to-pink-600",
+                    bg: "bg-rose-50",
+                    text: "text-rose-700",
+                    border: "border-rose-200",
+                    description: "溫泉與夜景之都，多瑙河畔的浪漫起點。",
+                    days: [
+                        {
+                            day: "Day 1",
+                            date: "2026/3/6 (五)",
+                            title: "抵達與初見多瑙河",
+                            imgKeyword: "Budapest parliament night river",
+                            highlights: [
+                                "抵達布達佩斯，輕鬆漫遊",
+                                "傍晚：漫步多瑙河佩斯側，欣賞鎖鏈橋夜景",
+                                "晚餐：Menza Étterem 或 Gettó Gulyás (匈牙利燉牛肉湯)"
+                            ],
+                            stay: "Three Corners Lifestyle Hotel",
+                            transport: "維也納機場 → 布達佩斯 (FlixBus, 3小時)",
+                            costs: [
+                                { label: "機票 (TWD)", value: "32,680" },
+                                { label: "住宿 (TWD)", value: "14,895 (4晚總計)" },
+                                { label: "交通/餐費 (EUR)", value: "116" }
+                            ]
+                        },
+                        {
+                            day: "Day 2",
+                            date: "2026/3/7 (六)",
+                            title: "布達區的浪漫與輝煌",
+                            imgKeyword: "Fisherman's Bastion Budapest",
+                            highlights: [
+                                "🏰 上午：搭復古纜車上城堡山，參觀漁人堡 (必拍!) 與馬提亞斯教堂",
+                                "🍰 下午：Ruszwurm Confectionery 百年蛋糕",
+                                "✨ 蜜月必做：多瑙河晚宴遊船 (Danube Dinner Cruise) 邊吃晚餐邊看國會大廈倒影"
+                            ],
+                            stay: "Three Corners Lifestyle Hotel",
+                            transport: "市區地鐵/纜車 (72hr券)",
+                            costs: [
+                                { label: "門票/交通 (EUR)", value: "108" },
+                                { label: "晚宴遊船 (EUR)", value: "120" }
+                            ]
+                        },
+                        {
+                            day: "Day 3",
+                            date: "2026/3/8 (日)",
+                            title: "佩斯區文化與溫泉放鬆",
+                            imgKeyword: "Széchenyi Thermal Bath",
+                            highlights: [
+                                "🏛 上午：國會大廈 (入內參觀極致奢華)",
+                                "🍴 午餐：中央市場 (Great Market Hall) 吃 Lángos 炸餅",
+                                "👁 下午：聖伊什特萬聖殿登頂",
+                                "♨️ 蜜月體驗：塞切尼溫泉 (經典華麗) 或 盧達溫泉 (浪漫夜景)"
+                            ],
+                            stay: "Three Corners Lifestyle Hotel",
+                            transport: "市區地鐵/步行",
+                            costs: [
+                                { label: "門票/溫泉 (EUR)", value: "206" }
+                            ]
+                        },
+                        {
+                            day: "Day 4",
+                            date: "2026/3/9 (一)",
+                            title: "猶太區與廢墟酒吧氛圍",
+                            imgKeyword: "Budapest ruin bar",
+                            highlights: [
+                                "上午：煙草街會堂 (歐洲最大猶太會堂)",
+                                "午餐：Mazel Tov (超美花園廢墟餐廳，網美必去)",
+                                "下午：漫遊猶太區巷弄，尋找街頭塗鴉",
+                                "🍸 晚上：Szimpla Kert 廢墟酒吧巡禮 (奇幻裝潢)"
+                            ],
+                            stay: "Three Corners Lifestyle Hotel",
+                            transport: "市區地鐵/步行",
+                            costs: [
+                                { label: "門票/餐飲 (EUR)", value: "80+" }
+                            ]
+                        }
+                    ]
+                },
+                Vienna: {
+                    city: "奧地利 維也納",
+                    label: "維也納",
+                    color: "from-amber-500 to-orange-600",
+                    bg: "bg-amber-50",
+                    text: "text-amber-700",
+                    border: "border-amber-200",
+                    description: "音樂、皇室與世界遺產咖啡館的優雅。",
+                    days: [
+                        {
+                            day: "Day 5",
+                            date: "2026/3/10 (二)",
+                            title: "移動至維也納 & 咖啡館文化",
+                            imgKeyword: "Vienna cafe cake",
+                            highlights: [
+                                "🚂 移動：搭火車前往維也納 (RegioJet)",
+                                "下午：聖史蒂芬大教堂 & 格拉本大街漫步",
+                                "☕️ 蜜月下午茶：中央咖啡館 (Café Central) 或 Café Demel"
+                            ],
+                            stay: "Premier Inn Wien City Hauptbahnhof",
+                            transport: "布達佩斯 → 維也納 (火車, 3小時)",
+                            costs: [
+                                { label: "火車/交通 (EUR)", value: "68" },
+                                { label: "住宿 (TWD)", value: "11,373 (3晚總計)" }
+                            ]
+                        },
+                        {
+                            day: "Day 6",
+                            date: "2026/3/11 (三)",
+                            title: "皇宮漫遊與音樂之夜",
+                            imgKeyword: "Schönbrunn Palace",
+                            highlights: [
+                                "👑 上午：美泉宮 (熊布朗宮) 後花園漫步，爬上凱旋門看全景",
+                                "📚 下午：奧地利國家圖書館 (世界最美圖書館)",
+                                "🎵 晚上：維也納國家歌劇院或金色大廳音樂會"
+                            ],
+                            stay: "Premier Inn Wien City Hauptbahnhof",
+                            transport: "地鐵 U-Bahn",
+                            costs: [
+                                { label: "門票/餐飲 (EUR)", value: "80+" }
+                            ]
+                        },
+                        {
+                            day: "Day 7",
+                            date: "2026/3/12 (四)",
+                            title: "藝術名畫與電影浪漫場景",
+                            imgKeyword: "Belvedere Palace Vienna",
+                            highlights: [
+                                "🖼 上午：美景宮 (Belvedere) 親眼看克林姆名畫《吻》",
+                                "🍴 午餐：Figlmüller 比臉大炸豬排",
+                                "🎡 浪漫推薦：普拉特遊樂園百年摩天輪 (電影《愛在黎明破曉時》場景)"
+                            ],
+                            stay: "Premier Inn Wien City Hauptbahnhof",
+                            transport: "地鐵/電車",
+                            costs: [
+                                { label: "門票/餐飲 (EUR)", value: "80+" }
+                            ]
+                        }
+                    ]
+                },
+                LakeDistrict: {
+                    city: "奧地利 湖區",
+                    label: "湖區 & 溫泉",
+                    color: "from-emerald-500 to-teal-600",
+                    bg: "bg-emerald-50",
+                    text: "text-emerald-700",
+                    border: "border-emerald-200",
+                    description: "真善美的山水畫，法蘭茲約瑟夫皇帝的避暑勝地。",
+                    days: [
+                        {
+                            day: "Day 8",
+                            date: "2026/3/13 (五)",
+                            title: "移動至溫泉小鎮 巴德伊舍",
+                            imgKeyword: "Bad Ischl Austria",
+                            highlights: [
+                                "移動日：前往茜茜公主訂婚的小鎮 - 巴德伊舍",
+                                "下午：漫步特勞恩河畔，享受寧靜",
+                                "下午茶：Café Zauner (奧地利傳奇甜點)"
+                            ],
+                            stay: "Im Kurpark (巴德伊舍)",
+                            transport: "維也納 → 巴德伊舍 (火車轉乘, 3小時)",
+                            costs: [
+                                { label: "火車 (EUR)", value: "60" },
+                                { label: "住宿 (TWD)", value: "8,521 (2晚總計)" }
+                            ]
+                        },
+                        {
+                            day: "Day 9",
+                            date: "2026/3/14 (六)",
+                            title: "沃爾夫岡湖與登山火車",
+                            imgKeyword: "Schafbergbahn train",
+                            highlights: [
+                                "🚂 必去：夏夫堡登山火車 (俯瞰七湖全景，若有營運)",
+                                "備案：沃爾夫岡湖遊船",
+                                "漫遊：聖沃爾夫岡小鎮與朝聖教堂"
+                            ],
+                            stay: "Im Kurpark (巴德伊舍)",
+                            transport: "巴士往返",
+                            costs: [
+                                { label: "交通/門票 (EUR)", value: "64" }
+                            ]
+                        },
+                        {
+                            day: "Day 10",
+                            date: "2026/3/15 (日)",
+                            title: "哈修塔特與戈紹湖",
+                            imgKeyword: "Hallstatt lake morning",
+                            highlights: [
+                                "移動至世界最美小鎮：哈修塔特",
+                                "🌲 秘境：戈紹湖 (Gosausee) 環湖健行，看雪山倒影 (人少清幽)",
+                                "傍晚：享受團客散去後的寧靜哈修塔特"
+                            ],
+                            stay: "Heritage Hotel Hallstatt (面湖)",
+                            transport: "巴士接駁",
+                            costs: [
+                                { label: "交通 (EUR)", value: "20" },
+                                { label: "住宿 (TWD)", value: "10,124 (1晚)" }
+                            ]
+                        }
+                    ]
+                },
+                CKTown: {
+                    city: "捷克 CK小鎮",
+                    label: "CK 小鎮",
+                    color: "from-orange-700 to-red-800",
+                    bg: "bg-orange-50",
+                    text: "text-orange-900",
+                    border: "border-orange-200",
+                    description: "庫倫洛夫 (Český Krumlov)，被河灣包圍的中世紀童話。",
+                    days: [
+                        {
+                            day: "Day 11",
+                            date: "2026/3/16 (一)",
+                            title: "哈修塔特晨光 & 移動至CK小鎮",
+                            imgKeyword: "Cesky Krumlov aerial",
+                            highlights: [
+                                "🌅 絕景：哈修塔特晨霧 (早起福利！)",
+                                "上午：參觀鹽礦 (有趣木滑梯) 或 天空步道",
+                                "中午：搭乘 CK Shuttle 專車直達飯店",
+                                "晚餐：地窖餐廳 Krčma v Šatlavské ulici 烤肉大餐"
+                            ],
+                            stay: "Boutique hotel Villa Beatika",
+                            transport: "CK Shuttle (共乘專車)",
+                            costs: [
+                                { label: "接駁/門票 (EUR)", value: "266" },
+                                { label: "住宿 (TWD)", value: "4,162 (1晚)" }
+                            ]
+                        },
+                        {
+                            day: "Day 12",
+                            date: "2026/3/17 (二)",
+                            title: "城堡巡禮 & 移動至布拉格",
+                            imgKeyword: "Prague Old Town Square",
+                            highlights: [
+                                "上午：CK 城堡彩繪塔俯瞰紅屋頂，看護城河裡的熊",
+                                "下午：移動至布拉格，舊城廣場看天文鐘",
+                                "小吃：路邊買熱騰騰肉桂捲 (Trdelník)"
+                            ],
+                            stay: "The Viaduct - Suites & More",
+                            transport: "CK → 布拉格 (FlixBus)",
+                            costs: [
+                                { label: "交通/門票 (EUR)", value: "116" },
+                                { label: "住宿 (TWD)", value: "16,893 (3晚總計)" }
+                            ]
+                        }
+                    ]
+                },
+                Prague: {
+                    city: "捷克 布拉格",
+                    label: "布拉格",
+                    color: "from-purple-600 to-indigo-700",
+                    bg: "bg-purple-50",
+                    text: "text-purple-800",
+                    border: "border-purple-200",
+                    description: "千塔之城，充滿神祕傳說與浪漫氛圍。",
+                    days: [
+                        {
+                            day: "Day 13",
+                            date: "2026/3/18 (三)",
+                            title: "城堡區與查理大橋",
+                            imgKeyword: "Charles Bridge Prague",
+                            highlights: [
+                                "🏰 上午：布拉格城堡 (聖維特大教堂彩繪玻璃、黃金巷)",
+                                "漫步：必走查理大橋 (Charles Bridge)",
+                                "放鬆：橋下康帕島與列儂牆塗鴉"
+                            ],
+                            stay: "The Viaduct - Suites & More",
+                            transport: "地鐵/電車/步行",
+                            costs: [
+                                { label: "門票/交通 (EUR)", value: "130" }
+                            ]
+                        },
+                        {
+                            day: "Day 14",
+                            date: "2026/3/19 (四)",
+                            title: "登高望遠 & 蜜月終章",
+                            imgKeyword: "Prague rooftop view",
+                            highlights: [
+                                "上午：佩特任山纜車 & 暸望塔 (小巴黎鐵塔) 看全景",
+                                "下午：慕夏博物館 (新藝術風格)",
+                                "🍽 蜜月晚餐：預約景觀餐廳，為蜜月畫下完美句點"
+                            ],
+                            stay: "The Viaduct - Suites & More",
+                            transport: "纜車/地鐵",
+                            costs: [
+                                { label: "門票/交通 (EUR)", value: "104" }
+                            ]
+                        },
+                        {
+                            day: "Day 15",
+                            date: "2026/3/20 (五)",
+                            title: "告別布拉格 & 滿載而歸",
+                            imgKeyword: "Prague souvenir shop",
+                            highlights: [
+                                "最後採買：菠丹妮香氛皂、蔓菲蘿、Koh-i-noor 色鉛筆",
+                                "整理行囊，前往機場"
+                            ],
+                            stay: "溫暖的家",
+                            transport: "前往機場",
+                            costs: [
+                                { label: "機票(回程)", value: "已含" }
+                            ]
+                        }
+                    ]
+                }
+            };
+
+            const tabs = Object.keys(itineraryData);
+            const currentData = itineraryData[activeTab];
+
+            // 總計花費 (TWD 部分)
+            const totalHotelTWD = 14895 + 11373 + 8521 + 10124 + 4162 + 16893;
+            const flightTWD = 32680;
+            const totalTWD = totalHotelTWD + flightTWD;
+
+            return (
+                <div className="min-h-screen pb-12">
+                    {/* Print Button (新增的按鈕) */}
+                    <div className="fixed top-4 right-4 z-50 no-print">
+                        <button 
+                            onClick={() => window.print()}
+                            className="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-full shadow-lg font-bold transition-all transform hover:scale-105"
+                        >
+                            <Icon name="printer" size={18} />
+                            <span className="hidden md:inline">列印 / 存為 PDF</span>
+                        </button>
+                    </div>
+
+                    {/* Header Image Area */}
+                    <div className="relative h-64 md:h-80 bg-slate-800 overflow-hidden shadow-lg">
+                        <img 
+                            src="https://image.pollinations.ai/prompt/romantic%20central%20europe%20travel%20collage%20budapest%20vienna%20prague?width=1200&height=600&nologo=true" 
+                            alt="Header" 
+                            className="w-full h-full object-cover opacity-60"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div>
+                        <div className="absolute bottom-0 left-0 p-6 md:p-10 text-white w-full">
+                            <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+                                <div>
+                                    <div className="flex items-center gap-2 text-rose-300 mb-2 font-medium tracking-wide">
+                                        <Icon name="heart" size={20} className="fill-current" />
+                                        <span>2026 蜜月之旅 • 15 Days</span>
+                                    </div>
+                                    <h1 className="text-3xl md:text-5xl font-bold mb-2 leading-tight">中歐三國 • 浪漫行旅</h1>
+                                    <p className="text-slate-200 text-sm md:text-lg max-w-2xl opacity-90">
+                                        匈牙利布達佩斯 <Icon name="arrowRight" size={14} className="inline mx-1"/> 
+                                        奧地利維也納 & 湖區 <Icon name="arrowRight" size={14} className="inline mx-1"/> 
+                                        捷克 CK & 布拉格
+                                    </p>
+                                </div>
+                                <div className="bg-white/10 backdrop-blur-md rounded-lg p-3 border border-white/20">
+                                    <div className="text-xs text-slate-300 uppercase tracking-wider mb-1">預估總花費 (TWD)</div>
+                                    <div className="text-xl font-bold font-mono text-white">
+                                        NT$ {totalTWD.toLocaleString()} 
+                                        <span className="text-xs font-normal opacity-70 ml-1">+ 當地歐元花費</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Navigation Tabs */}
+                    <div className="sticky top-0 z-30 bg-white shadow-sm border-b border-slate-200 overflow-x-auto hide-scrollbar">
+                        <div className="max-w-4xl mx-auto px-4">
+                            <div className="flex space-x-2 py-3 min-w-max">
+                                {tabs.map((key) => (
+                                    <button
+                                        key={key}
+                                        onClick={() => setActiveTab(key)}
+                                        className={`
+                                            px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap flex items-center gap-2
+                                            ${activeTab === key 
+                                                ? `bg-slate-800 text-white shadow-md transform scale-105` 
+                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800'}
+                                        `}
+                                    >
+                                        <Icon name="mapPin" size={14} className={activeTab === key ? "fill-current" : ""} />
+                                        {itineraryData[key].label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Main Content */}
+                    <main className="max-w-4xl mx-auto px-4 py-8">
+                        
+                        {/* Section Header */}
+                        <div className="mb-8 animate-fade-in">
+                            <div className={`inline-block px-3 py-1 rounded-md text-sm font-bold bg-gradient-to-r ${currentData.color} text-white mb-3 shadow-sm`}>
+                                {currentData.city}
+                            </div>
+                            <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-2">
+                                {currentData.description}
+                            </h2>
+                        </div>
+
+                        {/* Daily Cards */}
+                        <div className="grid gap-8">
+                            {currentData.days.map((dayData, index) => (
+                                <div 
+                                    key={index} 
+                                    className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row group"
+                                >
+                                    {/* Image Section */}
+                                    <div className="md:w-1/3 h-48 md:h-auto relative overflow-hidden bg-slate-200">
+                                        <img 
+                                            src={`https://image.pollinations.ai/prompt/travel%20photography%20${dayData.imgKeyword}?width=600&height=800&nologo=true`}
+                                            alt={dayData.title}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                            loading="lazy"
+                                        />
+                                        <div className="absolute top-0 left-0 bg-black/60 text-white px-3 py-1 rounded-br-lg text-sm font-bold backdrop-blur-sm">
+                                            {dayData.day}
+                                        </div>
+                                    </div>
+
+                                    {/* Content Section */}
+                                    <div className="p-6 md:w-2/3 flex flex-col justify-between">
+                                        <div>
+                                            <div className="flex items-center gap-2 text-slate-500 text-sm mb-1">
+                                                <Icon name="calendar" size={14} />
+                                                <span>{dayData.date}</span>
+                                            </div>
+                                            <h3 className="text-xl font-bold text-slate-800 mb-4 group-hover:text-rose-600 transition-colors">
+                                                {dayData.title}
+                                            </h3>
+
+                                            {/* Highlights */}
+                                            <div className="space-y-2 mb-6">
+                                                {dayData.highlights.map((point, idx) => (
+                                                    <div key={idx} className="flex items-start gap-2 text-slate-600">
+                                                        <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-rose-400 flex-shrink-0"></div>
+                                                        <span className="text-sm leading-relaxed">{point}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Info Footer */}
+                                        <div className={`mt-4 pt-4 border-t border-dashed ${currentData.border} grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm`}>
+                                            
+                                            {/* Hotel */}
+                                            <div className="flex items-start gap-2">
+                                                <div className={`p-1.5 rounded-md ${currentData.bg} ${currentData.text}`}>
+                                                    <Icon name="bed" size={16} />
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs text-slate-400 font-medium uppercase">住宿</div>
+                                                    <div className="font-medium text-slate-700">{dayData.stay}</div>
+                                                </div>
+                                            </div>
+
+                                            {/* Transport */}
+                                            <div className="flex items-start gap-2">
+                                                <div className={`p-1.5 rounded-md ${currentData.bg} ${currentData.text}`}>
+                                                    <Icon name="train" size={16} />
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs text-slate-400 font-medium uppercase">交通移動</div>
+                                                    <div className="font-medium text-slate-700">{dayData.transport}</div>
+                                                </div>
+                                            </div>
+
+                                            {/* Cost - Full Width on Mobile */}
+                                            <div className="col-span-1 sm:col-span-2 flex items-start gap-2">
+                                                <div className={`p-1.5 rounded-md ${currentData.bg} ${currentData.text}`}>
+                                                    <Icon name="euro" size={16} />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="text-xs text-slate-400 font-medium uppercase">預估花費</div>
+                                                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                                                        {dayData.costs.map((cost, cIdx) => (
+                                                            <span key={cIdx} className="inline-flex items-center gap-1 bg-slate-50 px-2 py-0.5 rounded border border-slate-100 text-xs text-slate-600">
+                                                                {cost.label}: <span className="font-semibold text-slate-800">{cost.value}</span>
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Footer Quote */}
+                        <div className="mt-12 text-center text-slate-400 text-sm italic">
+                            "The world is a book and those who do not travel read only one page."
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ItineraryApp />);
+    </script>
+</body>
+</html>
